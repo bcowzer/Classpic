@@ -8,16 +8,18 @@
     <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1"/>
 <!-- loading the default bootstrap style sheet-->    
 <link href="css/bootstrap.css" rel="stylesheet">
-<!-- an additional style sheet--> 
-<link href="css/extra2.css" rel="stylesheet">
+<!-- Our own style sheet -->
+<link href="css/classpic_styles.css" rel="stylesheet">
+
 <!-- loading what is the main body font--> 
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600'
 rel='stylesheet' type='text/css'>
+<!--loading font for icons-->
 <link rel="stylesheet" href="font-awesome-4.1.0/css/font-awesome.min.css">
 <!-- prepping for phonegap packaging--> 
 <script src="phonegap.js"></script>
 <script type="text/javascript" charset="utf-8">
-
+/*code for accessing a device camera and saving to default photo album*/
    function onPhotoFileSuccess(imageData) {
         var userPhoto = document.getElementById('userPhoto');
  
@@ -43,14 +45,13 @@ rel='stylesheet' type='text/css'>
 </script>
 
  <style type="text/css">
+ /*needed to install body settings seperately in each page*/
 body{
        background-color: #333; 
     background-image: url("images/LightMarker5.jpg");
     background-size:cover;
-    /*background-image: responsive;*/
       background-repeat: no-repeat;
       background-position: center center;
-      /*background-size:100%;*/
       background-attachment:fixed;
 
       font-family: 'Open Sans', sans-serif;
@@ -69,7 +70,8 @@ body{
     
     
 
-<!-- div that houses the image preview-->
+<!-- div that houses the image preview after its selection from the
+device gallery-->
 <div class="image-holder" id="grey">
  <output id="list"></output>
     </div>
@@ -78,26 +80,25 @@ body{
 <div class="form-holder" id='params'>
   <div class="forms">
 		 <form name = "userclass">
-    	<!--<div class="button-row">-->
+   
 	<select class="form-control" name='class' onChange = "classid = this.value" id='class' placeholder='Class Year'>
 		<option value='0' selected><em>Select Class Year</em></option>
 			<option value='674'>Early Years group Nursery A</option>
 		    <option value='675'>Early Years group Reception A</option>
 	</select>
-	<!--</div>-->
+	
         </form>
     <form name = "userprofile">
-    	<!--<div class="button-row">-->
+  
 	<select class="form-control" name='profile' onChange= "profileid = this.value" id='profile'>
         <option value='0' selected><em>Select Class Profile</em></option>
 		<option value='ELG'>Early learning Goals</option>
 		<option value='EYFS2436'>Early Years Foundation Stage 2436</option>
 		<option value='EYFS3648'>Early Years Foundation Stage 3648</option>
 	</select>
-	<!--</div>-->
         </form>  
   <form name ="usercomponent">
-    	<!--<div class="button-row">-->
+  
 	<select class="form-control" name='component' onChange="componentid = this.value" id='component'>
 		<option value='0' selected><em>Select Component</em></option>
             <option value='PSED:SCSA'>PSED: Self-confidence and Self-awareness</option>
@@ -117,13 +118,12 @@ body{
             <option value='EAD:EMM'>EAD: Exlporing and using Media and Materials</option>
             <option value='EAD:BI'>EAD: Being Imaginative</option>
 	</select>
-	<!--<div>-->
         </form>	
-		<!--<div-class="button-row">-->
+	<!-- submit button for all 3 select menus above-->
 	<button class="btn btn-success btn-block" input type="button" value='Go' onclick="submit();">Load Class Settings</button>
-<!--</div>-->
-</div>
-</div>
+</div><!--end of forms div-->
+
+</div><!--end of div with id 'params' and class form-holder-->
 
 
 <!--When parameters are selected on the form in 'params' div above this window will be seen, where the teacher is able to select students, a statement and upload multiples pictures-->
@@ -206,7 +206,7 @@ body{
 	var classid=document.userclass.class.value;
 	var componentid= document.usercomponent.component.value;
 	var profileid=document.userprofile.profile.value;
-	//var checkedCheckboxes=document.tester.students.value;
+
 
 	function statementsbody(){
 		document.getElementById('statementsbody').style.display='table-cell';
@@ -224,7 +224,8 @@ body{
 		xmlhttpc.open("GET",apiURL+"?schoolid="+schoolid+"&username="+user+"&token="+token+"&action=getclasses",true);
 		xmlhttpc.send();
 
-/*Get students*/
+/*Get student name through API and dynamically create div
+containing checkboxes and JSON data(student names and profile pics), these are loaded into the 'Select Students' Modal */
 		var xmlhttp=new XMLHttpRequest();
 		xmlhttp.onreadystatechange=function(){
 			if(xmlhttp.readyState==4 && xmlhttp.status==200){
@@ -237,27 +238,17 @@ body{
 						studentdiv.id="student";
 						studentdiv.innerHTML="<div class='checkbox'><label><input type='checkbox' name='students[]' value='"+data.students[i].sid+"'>"+data.students[i].forename+" "+data.students[i].surname+"</label></div><div class='stud_img'><img src='"+data.students[i].profilephoto+"'></div>";
 						document.getElementById('students').appendChild(studentdiv);
-
-						/*for(i=0;i<data.students.length;i++){
-						var studentrow=document.createElement('TR');
-						studentrow.id="student";
-						studentrow.innerHTML="<tr class='success'><div class='checkbox'><label><input type='checkbox' name='students[]' value='"+data.students[i].sid+"'>"+data.students[i].forename+" "+data.students[i].surname+"</label></div></tr>";
-						document.getElementById('student-names').appendChild(studentrow);*/
 						
 						}
 					}
-				/*else{
-					for(i=0;i<data.errors.length;i++){
-						console.log(data.errors);
-						alert(data.errors[i]);
-						}
-					}*/
+
 				}
 			}
 		xmlhttp.open("GET",apiURL+"?schoolid="+schoolid+"&username="+user+"&token="+token+"&action=getstudents&classid="+classid,true);
 		xmlhttp.send();
         
-/*Get statements*/
+/*Get statements, another API call to get JSON statements and apply
+them along with radio buttons to the 'Statements' modal*/
 		var xmlhttps=new XMLHttpRequest();
 		xmlhttps.onreadystatechange=function(){
 			if(xmlhttps.readyState==4 && xmlhttps.status==200){
@@ -269,6 +260,7 @@ body{
 						var statementdiv=document.createElement('div');
 						statementdiv.id="statement";
 						var str = data.statements[i].statement;
+						/*This following code cleans up unwanted charcters that appear on the requested statements*/
 						var newstatement = str.replace ("^", " ").replace ("#", " ").replace ("~", " ").replace ("*", " ");
 						statementdiv.innerHTML="<div class='radio'><label><input type='radio' name='statement' value='"+data.statements[i].skillid+"'>"+newstatement+"</label></div>";
 						document.getElementById('statements').appendChild(statementdiv);
@@ -280,6 +272,7 @@ body{
 		xmlhttps.open("GET",apiURL+"?schoolid="+schoolid+"&username="+user+"&token="+token+"&action=getstatements&componentid="+componentid+"&profileid="+profileid,true);
 		xmlhttps.send();
 		}
+		/*this code allows for the selection of the requested photo from the device gallery and for the chosen photo to appear in the image-holder-div area*/
     if (window.FileReader) {
       function handleFileSelect(evt) {
         var files = evt.target.files;
@@ -289,8 +282,10 @@ body{
           reader.onload = (function(theFile) {
             return function(e) {
               document.getElementById('list').innerHTML = ['<img src="', e.target.result,'" title="', theFile.name,'" width="100%"/>'].join('');
-              // height="400"
-                document.getElementById('grey').style.backgroundColor = "rgba(64,64,64,0.8)";
+              // http://stackoverflow.com/questions/10468108/how-do-i-change-background-color-of-div-using-javascript-function;
+              //changes the background color of 'image-holder' div after photo is selected and diaplayed.
+              document.getElementById('grey').style.backgroundColor = "rgba(64,64,64,0.8)";
+
             };
           })(f);
     
@@ -317,9 +312,9 @@ body{
 						imagesdata[count]={};
 						imagesdata[count]['photo']=e.target.result;
 						imagesdata[count]['name']=fileName;
-						//document.getElementById('preview').src=e.target.result;
+
+						/*Uploading the selected student names alongside selected picture*/
 						if(count==filesno){
-							
 							var checkboxes=document.getElementsByName('students[]');
 							var checkedCheckboxes={};
 							for(var i=0; i<checkboxes.length; i++) {
@@ -327,21 +322,10 @@ body{
 									checkedCheckboxes[i]=checkboxes[i].value;
 									}
 								}
+								/*code to upload the comments created by user in the text area*/
 								var comments = document.getElementById("user-comments").value;
 				
-							//**** Here is thecode im trying for uploading the select menu items****
-							//var checkedCheckboxes=document.getElementById('students').value;
-
-							/*var select=document.getElementById('students');
-							//var selected=select.options[select.selectedIndex].text;
-							var selected='';
-							for(var i=0; i<select.length; i++)
-							{
-								if(select.options[i].selected){
-									selected.push(select.options[i].value);
-								}
-							}*/
-						//**** This is existing radiobutton upload code but I still need to get code to upload text box items****
+						/*code to upload the 'Statements' alongside Picture and selected student names*/
 
 							var radiobuttons=document.getElementsByName('statement');
 							var checkedRadio='';
@@ -359,6 +343,7 @@ body{
 									console.log(data);
 									if(data.success){
 										alert('File uploaded');
+										/*after everrything is uploaded to the API successfully we go back to the start of page2b*/
 										location = "page2b.html";
 										}
 									}
@@ -404,12 +389,6 @@ body{
    </div>
    </div> 
 </div>
-    <!--<div>
-        <img src ="images/classis.jpg">
-        </div>-->
-    
-    <!--<div data-role="footer" data-position="fixed">
-    <h1> Learning Data ClassIS</h1></div>-->
 
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
